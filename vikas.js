@@ -5,6 +5,18 @@ const content = document.querySelector('.content');
 // Speech Synthesis Function
 function speak(text) {
     const text_speak = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    
+    // Find a male voice (English)
+    const maleVoice = voices.find(voice => 
+        voice.lang.includes("en") && 
+        (voice.name.includes("Male") || 
+         voice.name.includes("David") || 
+         voice.name.includes("Mark") || 
+         voice.name.includes("Google UK English Male"))
+    ) || voices.find(voice => voice.lang.includes("en")); // Fallback to any English voice
+
+    text_speak.voice = maleVoice; // Set male voice
     text_speak.rate = 1.2;   // Speed of speech
     text_speak.volume = 1;   // Volume level
     text_speak.pitch = 1.3;  // Pitch of voice
