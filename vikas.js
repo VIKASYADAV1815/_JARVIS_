@@ -64,7 +64,7 @@ function takeCommand(message) {
     // ------------------------------------
     // Basic Commands
     // ------------------------------------
-    if (message.includes('hey') || message.includes('hello jarvis')) {
+    if (message.includes('hello') || message.includes('hello jarvis')) {
         speak("Hello Sir, How May I Help You?");
     } else if (message.includes("open google")) {
         window.open("https://google.com", "_blank");
