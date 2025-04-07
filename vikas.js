@@ -2,28 +2,28 @@
 const btn = document.querySelector('.talk');
 const content = document.querySelector('.content');
 
-// Speech Synthesis Function
+// Speech Synthesis Function (Male Voice)
 function speak(text) {
     const text_speak = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
     
-    // Find a male voice (English)
+    // Male voice selection
     const maleVoice = voices.find(voice => 
         voice.lang.includes("en") && 
         (voice.name.includes("Male") || 
          voice.name.includes("David") || 
          voice.name.includes("Mark") || 
          voice.name.includes("Google UK English Male"))
-    ) || voices.find(voice => voice.lang.includes("en")); // Fallback to any English voice
-
-    text_speak.voice = maleVoice; // Set male voice
-    text_speak.rate = 1.2;   // Speed of speech
-    text_speak.volume = 1;   // Volume level
-    text_speak.pitch = 1.3;  // Pitch of voice
+    ) || voices.find(voice => voice.lang.includes("en")); // Fallback
+    
+    text_speak.voice = maleVoice;
+    text_speak.rate = 1.2;
+    text_speak.volume = 1;
+    text_speak.pitch = 1.3;
     window.speechSynthesis.speak(text_speak);
 }
 
-// Greeting Function Based on Time
+// Greeting Function
 function wishMe() {
     const hour = new Date().getHours();
     if (hour >= 0 && hour < 12) {
@@ -35,10 +35,23 @@ function wishMe() {
     }
 }
 
-// Initialization on Page Load
+// Voices Load Handler
+window.speechSynthesis.onvoiceschanged = () => {
+    console.log("Voices loaded:", window.speechSynthesis.getVoices());
+};
+
+// Page Load Initialization
 document.addEventListener('DOMContentLoaded', () => {
-    speak("Initializing JARVIS");
-    wishMe();
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            speak("Initializing JARVIS");
+            wishMe();
+        };
+    } else {
+        speak("Initializing JARVIS");
+        wishMe();
+    }
 });
 
 // Speech Recognition Setup
@@ -49,11 +62,11 @@ const recognition = new SpeechRecognition();
 recognition.onresult = (event) => {
     const currentIndex = event.resultIndex;
     const transcript = event.results[currentIndex][0].transcript;
-    content.textContent = transcript;
+    content.textContent = transcript; // Update text here
     takeCommand(transcript.toLowerCase());
 };
 
-// Start Listening on Button Click
+// Mic Button Click
 btn.addEventListener('click', () => {
     content.textContent = "Listening....";
     recognition.start();
